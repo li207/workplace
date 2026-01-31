@@ -1,6 +1,5 @@
 # Private data folder (separate git repo)
-/data/
-/workplace-data/
+/workspace-data/
 
 # OS files
 .DS_Store
