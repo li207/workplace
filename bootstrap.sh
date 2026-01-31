@@ -55,37 +55,13 @@ fi
 
 # Create necessary data directories in workplace-data
 mkdir -p "$WORKPLACE_DIR/workplace-data/todo/archive"
-mkdir -p "$WORKPLACE_DIR/workplace-data/notes"
-mkdir -p "$WORKPLACE_DIR/workplace-data/journal"
 
-# Create initial TODO files if they don't exist
-if [ ! -f "$WORKPLACE_DIR/workplace-data/todo/inbox.md" ]; then
-    cat > "$WORKPLACE_DIR/workplace-data/todo/inbox.md" << 'EOF'
-# Inbox
+# Create initial TODO file if it doesn't exist
+if [ ! -f "$WORKPLACE_DIR/workplace-data/todo/active.md" ]; then
+    cat > "$WORKPLACE_DIR/workplace-data/todo/active.md" << 'EOF'
+# Active Tasks
 
-New tasks without a scheduled date.
-
----
-
-EOF
-fi
-
-if [ ! -f "$WORKPLACE_DIR/workplace-data/todo/today.md" ]; then
-    cat > "$WORKPLACE_DIR/workplace-data/todo/today.md" << 'EOF'
-# Today
-
-Tasks to focus on today.
-
----
-
-EOF
-fi
-
-if [ ! -f "$WORKPLACE_DIR/workplace-data/todo/upcoming.md" ]; then
-    cat > "$WORKPLACE_DIR/workplace-data/todo/upcoming.md" << 'EOF'
-# Upcoming
-
-Tasks scheduled for future dates.
+Tasks currently being worked on.
 
 ---
 

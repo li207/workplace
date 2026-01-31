@@ -1,98 +1,189 @@
-# Workplace - Personal Workspace Management System
+# Workplace - Intelligent Workspace Framework
 
-This is a modular, file-based personal workspace system designed to work with Claude (both Claude Code CLI and Claude Cowork desktop app).
+An extensible, Claude-native workspace system featuring natural language processing and modular architecture.
 
 ## Core Principles
 
-1. **File-based storage** — All data stored in markdown files, human-readable and portable
-2. **Data separation** — Personal data lives in `/data/` (private), everything else is shareable
-3. **Modular design** — Features are organized as independent modules
-4. **Claude-native** — This file provides context for any Claude session
-5. **Git-friendly** — Version control for both framework and data (separately)
+1. **Natural Language Processing** — Commands understand conversational intent, not rigid syntax
+2. **File-based Storage** — All data in human-readable markdown files
+3. **Privacy by Design** — Personal data completely separated from framework
+4. **Modular Architecture** — Commands, modules, and skills extend functionality independently  
+5. **Multi-User Ready** — Share framework, keep data private
+6. **Claude-Native** — Built specifically for Claude AI workflows
 
 ## Directory Structure
 
 ```
-workplace/
-├── instructions.md          # This file - master context for Claude
-├── CLAUDE.md                # Claude Code specific commands/shortcuts
-├── README.md                # Public documentation for sharing
-├── .gitignore               # Ignores /data/ folder
+workplace/                          # 🔓 Framework Repository (shareable)
+├── instructions.md                 # This file - master context for Claude
+├── CLAUDE.md                       # Claude Code shortcuts
+├── README.md                       # Public documentation
+├── bootstrap.sh                    # Setup script
+├── .gitignore                      # Excludes private data
 │
-├── .skills/                 # Custom skills for Claude
-│   └── todo/
-│       └── SKILL.md
+├── commands/                       # Global Claude commands
+│   └── todo.md                    # Natural language TODO processor
 │
-├── modules/                 # Module definitions and templates
-│   ├── todo/
+├── modules/                        # Module specifications
+│   ├── todo/                      # TODO module definition
 │   │   └── README.md
-│   └── [future modules]/
+│   └── [future-modules]/          # Notes, calendar, projects, etc.
 │
-├── scripts/                 # Automation scripts
-│   └── sync.sh
+├── .skills/                        # Custom Claude skills (optional)
+│   ├── todo/
+│   │   └── SKILL.md
+│   └── [future-skills]/
 │
-└── workplace-data/          # ⛔ PRIVATE - separate git repo, gitignored
-    ├── todo/
-    │   ├── inbox.md         # Uncategorized/new tasks
-    │   ├── today.md         # Today's focus
-    │   ├── upcoming.md      # Scheduled future tasks
-    │   └── archive/         # Completed tasks by date
+├── scripts/                        # Automation utilities
+│   ├── bootstrap.sh               # Moved to root
+│   └── sync.sh                    # Dual-repo syncing
+│
+└── workplace-data/                 # 🔒 Private Data Repository (gitignored)
+    ├── todo/                       # Task management data
+    │   ├── active.md              # Current tasks with context
+    │   └── archive/               # Completed tasks by date
     │       └── 2026-01-31.md
-    ├── notes/
-    ├── journal/
-    └── [future module data]/
+    │
+    └── [future-data]/              # Notes, calendar, projects, etc.
 ```
 
-## Active Modules
+## Active Commands
 
-### TODO Module
-Location: `modules/todo/` (definition) + `workplace-data/todo/` (data)
+### 🗣️ Natural Language TODO (`/todo`)
+**Location**: Global command - works from anywhere
+**Processor**: `commands/todo.md`
+**Data**: `workplace-data/todo/`
 
-**Operations:**
-- `todo add <task> [--priority high|medium|low] [--due YYYY-MM-DD]` — Create a new task
-- `todo list [today|upcoming|all]` — Show tasks
-- `todo done <task_id or description>` — Mark task complete
-- `todo move <task_id> <today|upcoming|inbox>` — Move task between lists
-- `todo review` — Show overdue and today's tasks
+**Natural Language Examples:**
+```bash
+# Creating tasks
+/todo create API integration task, urgent, due tomorrow
+/todo add client meeting friday, needs budget discussion
+/todo new security audit, reference OWASP guidelines
 
-**Data format** (in markdown files):
+# Managing tasks
+/todo list                          # Numbered task display  
+/todo mark first task as done       # Complete by position
+/todo change task 2 to high priority # Update by reference
+/todo what's overdue?               # Smart filtering
+
+# Getting insights  
+/todo review                        # Summary with alerts
+/todo show my current workload      # Status overview
+```
+
+**Enhanced Data Format:**
 ```markdown
-- [ ] Task description #id:abc123
+- [ ] Clean, actionable task title #id:abc123
   - priority: high
-  - due: 2026-02-01
-  - created: 2026-01-30
-  - tags: [work, urgent]
+  - created: 2026-01-31
+  - due: 2026-02-02
+  - tags: [security, backend]
+  - context: Detailed requirements, links to docs, coordination notes, POC details
 ```
 
-## How to Interact
+## Extension Patterns
 
-When starting a new Claude session in this directory:
+### Adding Commands (Global Claude Commands)
+1. **Create**: `commands/command-name.md` with natural language processing
+2. **Install**: Bootstrap copies to `~/.claude/commands/`
+3. **Use**: Available globally as `/command-name`
 
-1. Claude should read this `instructions.md` to understand the workspace
-2. For specific modules, read the module's README in `modules/<name>/`
-3. All personal data operations happen in `/workplace-data/`
-4. Use the defined operations/commands for consistency
+**Command Template:**
+```markdown
+---
+title: Command Name
+description: Natural language command processor
+user-invocable: true
+args:
+  - name: command
+    description: Natural language input
+    type: string
+    required: true
+---
 
-## Adding New Modules
+[Natural language processing logic here]
+```
 
-1. Create `modules/<module-name>/README.md` with:
-   - Purpose and description
-   - Data format specification
-   - Available operations
-2. Create `workplace-data/<module-name>/` for the module's data files
-3. Optionally add `.skills/<module-name>/SKILL.md` for Claude skills
-4. Update this file's "Active Modules" section
+### Adding Modules (Feature Specifications)
+1. **Document**: `modules/module-name/README.md` with:
+   - Purpose and use cases
+   - Data format specifications  
+   - Natural language patterns
+   - Integration guidelines
 
-## Git Setup
+2. **Data Structure**: `workplace-data/module-name/` for storage
+3. **Commands**: Optional global commands in `commands/`
+4. **Skills**: Optional specialized skills in `.skills/`
 
-This workspace uses two independent git repositories:
+### Adding Skills (Claude Capabilities)  
+1. **Create**: `.skills/skill-name/SKILL.md`
+2. **Activate**: Reference in this instructions.md
+3. **Scope**: Context-specific Claude behaviors
 
-1. **Framework repo** (this directory): Public/shareable
-   - Push to: public or shared remote
-   - Contains: instructions, modules, skills, scripts
+## Future Extensions
 
-2. **Data repo** (`/workplace-data/` directory): Private
-   - Push to: private remote (or local-only)
-   - Contains: all personal data
+### Potential Modules
+- **Notes** (`/note`) — Knowledge management with linking
+- **Calendar** (`/cal`) — Schedule and meeting management  
+- **Projects** (`/project`) — Multi-task project tracking
+- **Journal** (`/journal`) — Daily reflection and logging
+- **Contacts** (`/contact`) — People and relationship management
 
-The `/workplace-data/` folder is gitignored in the parent repo.
+### Extension Guidelines
+- **Natural Language First** — Design for conversational interaction
+- **Data Separation** — Keep personal data in `workplace-data/`
+- **Privacy Aware** — Never commit personal data to framework repo
+- **Documentation Driven** — Specify formats and patterns clearly
+- **Interoperable** — Modules should work together when possible
+
+## Session Context
+
+When Claude starts in this directory:
+
+1. **Read Context**: This instructions.md provides system understanding
+2. **Module Access**: Refer to `modules/<name>/README.md` for specifics
+3. **Data Location**: All personal operations in `workplace-data/`
+4. **Commands Available**: Global commands work from anywhere
+5. **Extension Patterns**: Follow documented patterns for new features
+
+## Git Architecture
+
+### Dual Repository System
+1. **Framework Repository** (this directory):
+   - **Scope**: Commands, modules, documentation, scripts
+   - **Sharing**: Public or team-shared
+   - **Updates**: Pull to get new features and improvements
+
+2. **Data Repository** (`workplace-data/`):
+   - **Scope**: Personal tasks, notes, and information
+   - **Sharing**: Private individual repositories  
+   - **Updates**: Independent personal data management
+
+3. **Isolation**: `workplace-data/` gitignored from framework repo
+
+### Multi-User Benefits
+- **Teams**: Share framework improvements, keep data private
+- **Individuals**: Customize data structure, sync framework updates  
+- **Organizations**: Standardize tooling, respect privacy
+- **Open Source**: Framework improvements benefit everyone
+
+## Development Workflow
+
+### Framework Contributions
+1. **Fork/Clone**: Framework repository
+2. **Develop**: New commands, modules, improvements
+3. **Test**: With sample data (not real personal data)
+4. **Submit**: Pull request with documentation
+5. **Document**: Update instructions and README
+
+### Personal Customization
+1. **Commands**: Add custom commands to `commands/`
+2. **Modules**: Define personal module specifications
+3. **Data**: Structure personal data in `workplace-data/`
+4. **Skills**: Create specialized Claude behaviors
+5. **Sync**: Use sync script for dual-repo management
+
+---
+
+This framework grows with your needs while keeping your data private and your tools shareable.
