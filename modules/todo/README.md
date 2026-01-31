@@ -17,7 +17,7 @@ Tasks are stored in markdown files within `workplace-data/todo/`. The system mai
 
 ### Active Task
 ```markdown
-- [ ] Write comprehensive project proposal #id:a1b2c3
+- [ ] Write comprehensive project proposal
   - priority: high
   - created: 2026-01-30
   - due: 2026-02-15
@@ -27,7 +27,7 @@ Tasks are stored in markdown files within `workplace-data/todo/`. The system mai
 
 ### Completed Task
 ```markdown
-- [x] Review pull request #id:d4e5f6
+- [x] Review pull request
   - priority: medium
   - created: 2026-01-28
   - due: 2026-01-30
@@ -40,7 +40,6 @@ Tasks are stored in markdown files within `workplace-data/todo/`. The system mai
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `#id:` | Yes | Unique 6-char identifier (in task title) |
 | `priority` | No | `high`, `medium`, `low` (default: medium) |
 | `created` | Yes | Creation date in YYYY-MM-DD format |
 | `due` | No | Due date in YYYY-MM-DD format |
@@ -101,19 +100,19 @@ Display all active tasks.
 ```
 ## Active Tasks (3 tasks)
 
-- [ ] [HIGH] Submit quarterly report #id:a1b2c3
-- [ ] [MEDIUM] Buy groceries for the week #id:d4e5f6
-- [ ] [MEDIUM] Call dentist to schedule checkup #id:g7h8i9
+1. [HIGH] Submit quarterly report
+2. [MEDIUM] Buy groceries for the week
+3. [MEDIUM] Call dentist to schedule checkup
 ```
 
 ### Complete Task
 Mark a task as done and move to archive.
 
-**Usage:** `todo done "<description or id>"`
+**Usage:** `todo done "<description or task number>"`
 
 **Examples:**
 ```
-todo done "a1b2c3"
+todo done "task 1"
 todo done "Buy groceries"
 ```
 
@@ -131,7 +130,7 @@ Show summary of active tasks.
 - Low priority: 0
 
 ## Oldest Tasks (need attention)
-- [ ] [HIGH] Submit quarterly report (created: 5 days ago) #id:a1b2c3
+1. [HIGH] Submit quarterly report (created: 5 days ago)
 ```
 
 ### Help

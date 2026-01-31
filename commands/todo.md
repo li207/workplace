@@ -4,7 +4,7 @@ description: Manage tasks using natural language commands
 user-invocable: true
 args:
   - name: command
-    description: Natural language command (e.g., "create bug fix task, high priority, due tomorrow" or "mark first task as done" or "list" or "help")
+    description: What you want to do (e.g., "create task", "list", "mark done")
     type: string
     required: true
 ---
@@ -48,27 +48,26 @@ You are managing tasks using the Workplace TODO system with natural language pro
 5. **Execute Operation**:
 
    - **CREATE**: Add new task to `active.md`
-     - Generate unique 6-character ID
      - Organize title for clarity and actionability
      - Extract context for separate field
      - Parse priority, due date, tags from natural language
-     - Format: `- [ ] <clean-title> #id:<6-char-id>`
+     - Format: `- [ ] <clean-title>`
      - Include: priority, created, due (if specified), tags (if specified), context (if provided)
    
    - **LIST**: Display numbered active tasks from `active.md`
-     - Number tasks: "1. Fix authentication bug #abc123"
+     - Number tasks: "1. Fix authentication bug"
      - Sort: overdue first (⚠️), then by due date, then priority, then creation date
-     - Show: task number, priority indicator, title, due date, ID
-     - Format: "1. ⚠️ [HIGH] Submit quarterly report (due: 3 days ago) #abc123"
+     - Show: task number, priority indicator, title, due date
+     - Format: "1. ⚠️ [HIGH] Submit quarterly report (due: 3 days ago)"
    
    - **COMPLETE**: Mark task as done
-     - Parse task reference: "first task", "task 2", "the auth bug", or ID
+     - Parse task reference: "first task", "task 2", "the auth bug"
      - If ambiguous reference, show options and ask for clarification
      - Mark complete and move to archive with completion date
    
    - **UPDATE**: Modify existing task
      - Parse what to change: priority, due date, title, context, tags
-     - Parse which task: by number, description, or ID
+     - Parse which task: by number or description
      - Update the specified fields
    
    - **REVIEW**: Show task summary
@@ -81,7 +80,7 @@ You are managing tasks using the Workplace TODO system with natural language pro
 
 6. **Data Format**: Use the enhanced Workplace TODO format with context:
    ```markdown
-   - [ ] Clean, actionable task title #id:abc123
+   - [ ] Clean, actionable task title
      - priority: medium
      - created: 2026-01-31
      - due: 2026-02-15
@@ -173,10 +172,10 @@ An intelligent task management system that understands natural language commands
 ```
 ## Active Tasks (4 tasks)
 
-1. ⚠️ [HIGH] Submit quarterly report (due: 3 days ago) #abc123 [OVERDUE]
-2. [HIGH] Fix authentication bug (due: tomorrow) #def456
-3. [MEDIUM] Review code for security issues (due: Feb 10) #ghi789  
-4. [MEDIUM] Buy groceries for the week #jkl012
+1. ⚠️ [HIGH] Submit quarterly report (due: 3 days ago) [OVERDUE]
+2. [HIGH] Fix authentication bug (due: tomorrow)
+3. [MEDIUM] Review code for security issues (due: Feb 10)
+4. [MEDIUM] Buy groceries for the week
 ```
 
 #### ✅ **Completing Tasks**
@@ -194,9 +193,9 @@ An intelligent task management system that understands natural language commands
 /todo done with quarterly report
 /todo finished the grocery shopping
 
-# By ID
-/todo complete abc123
-/todo done def456
+# By task number
+/todo complete task 3
+/todo done #1
 ```
 
 #### ✏️ **Updating Tasks**
@@ -243,14 +242,14 @@ An intelligent task management system that understands natural language commands
 - Low priority: 0
 
 ⚠️  ## OVERDUE (1 task)
-1. [HIGH] Submit quarterly report (due: 3 days ago) #abc123
+1. [HIGH] Submit quarterly report (due: 3 days ago)
 
 ## Due This Week (2 tasks)  
-2. [HIGH] Fix authentication bug (due: tomorrow) #def456
-3. [MEDIUM] Review code (due: Feb 10) #ghi789
+2. [HIGH] Fix authentication bug (due: tomorrow)
+3. [MEDIUM] Review code (due: Feb 10)
 
 ## No Due Date (1 task)
-4. [MEDIUM] Buy groceries (created: 5 days ago) #jkl012
+4. [MEDIUM] Buy groceries (created: 5 days ago)
 ```
 
 ## Enhanced Data Format
@@ -258,14 +257,14 @@ An intelligent task management system that understands natural language commands
 Tasks are stored with clean titles and detailed context in `workplace-data/todo/active.md`:
 
 ```markdown
-- [ ] Fix authentication bug #id:abc123
+- [ ] Fix authentication bug
   - priority: high
   - created: 2026-01-31
   - due: 2026-02-02
   - tags: [security, backend]
   - context: Requires database migration script, coordinate with DevOps team, test rollback procedure, reference security audit findings in /docs/security-review.md
 
-- [ ] Update API documentation #id:def456
+- [ ] Update API documentation
   - priority: medium
   - created: 2026-01-31
   - tags: [documentation, api]
@@ -275,7 +274,7 @@ Tasks are stored with clean titles and detailed context in `workplace-data/todo/
 **Completed tasks** are moved to `archive/YYYY-MM-DD.md`:
 
 ```markdown
-- [x] Fix authentication bug #id:abc123
+- [x] Fix authentication bug
   - priority: high
   - created: 2026-01-31
   - due: 2026-02-02
@@ -298,7 +297,7 @@ Tasks are stored with clean titles and detailed context in `workplace-data/todo/
 
 ## Tips
 
-- **Task IDs:** Use the 6-character ID for precise task management
+- **Task Numbers:** Use the numbered list position or description for precise task management
 - **Organized descriptions:** The system cleans up your task descriptions automatically
 - **Tags:** Use tags to categorize tasks (e.g., work, personal, health)
 - **Keep it active:** Focus on tasks you're actually working on
