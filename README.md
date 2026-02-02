@@ -9,7 +9,7 @@ Workspace is a modular framework that brings intelligent task management and dat
 - **🧠 Natural Language Processing** — Talk to your tasks naturally
 - **🔒 Privacy-First Architecture** — Your data stays separate and private  
 - **📁 Human-Readable Storage** — Everything in markdown files
-- **🔧 Extensible Design** — Add new commands, skills, and modules
+- **🔧 Extensible Design** — Add new commands and modules
 - **👥 Multi-User Ready** — Teams share framework, individuals keep private data
 
 ## Quick Start
@@ -188,9 +188,6 @@ gh repo create my-workspace --private --source=. --push
 2. Add data structures to `workspace-data/modulename/`
 3. Optionally create global commands for the module
 
-### Adding Skills
-1. Create `.skills/skillname/SKILL.md` for specialized Claude capabilities
-2. Document in main instructions.md
 
 ## Data Format
 

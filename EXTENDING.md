@@ -4,10 +4,9 @@ A comprehensive guide for adding new functionality to the Workspace framework.
 
 ## Overview
 
-Workspace is designed for extensibility through three main mechanisms:
+Workspace is designed for extensibility through two main mechanisms:
 1. **Global Commands** — Natural language processors available everywhere
 2. **Modules** — Feature specifications with data structures
-3. **Skills** — Specialized Claude behaviors for complex tasks
 
 ## Extension Architecture
 
@@ -23,11 +22,6 @@ Workspace is designed for extensibility through three main mechanisms:
 │ ├─ Documentation in modules/module-name/            │
 │ ├─ Data storage in workspace-data/module-name/      │
 │ └─ Integration patterns and formats                 │
-├─────────────────────────────────────────────────────┤
-│ Skills (Specialized Behaviors)                      │
-│ ├─ Context-specific Claude capabilities             │
-│ ├─ Domain expertise and workflows                   │
-│ └─ Enhanced processing for complex tasks            │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -156,51 +150,6 @@ touch workspace-data/module-name/active.md
 
 ### 3. Optional: Create Global Command
 Follow the "Adding Global Commands" section to create `/module-command`
-
-## Adding Skills
-
-### 1. Create Skill File
-**Location**: `.skills/skill-name/SKILL.md`
-
-**Template**:
-```markdown
-# [Skill Name] Skill
-
-Specialized Claude behavior for [specific domain or complex task].
-
-## Purpose
-This skill provides enhanced capabilities for:
-- [Specific expertise area]
-- [Complex workflow automation]  
-- [Domain-specific knowledge application]
-
-## Activation Context
-This skill should be activated when:
-- [Specific triggers or contexts]
-- [User asks for advanced help in this domain]
-- [Complex multi-step processes are needed]
-
-## Specialized Knowledge
-[Include domain expertise, best practices, common patterns]
-
-## Enhanced Behaviors
-When this skill is active, Claude should:
-1. [Specific enhanced behavior 1]
-2. [Specific enhanced behavior 2]
-3. [Advanced processing patterns]
-
-## Example Interactions
-[Show how this skill enhances normal Claude responses]
-
-## Integration
-How this skill works with:
-- Related modules
-- Global commands  
-- Other skills
-```
-
-### 2. Reference in Instructions
-Add skill reference to `instructions.md` in the relevant module or context section.
 
 ## Extension Examples
 
