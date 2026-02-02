@@ -66,6 +66,41 @@ The Workspace module creates and manages isolated folder environments for indivi
     └── prototypes/
 ```
 
+### PROGRESS.md Structure
+
+The PROGRESS.md file tracks workspace progress with 7 standardized sections:
+
+| Section | Purpose |
+|---------|---------|
+| **Current Focus** | What you're actively working on right now |
+| **Next Actions** | Checkbox list of upcoming tasks (drives progress %) |
+| **Accomplishments** | Timestamped log of completed work |
+| **Blockers** | Issues preventing progress |
+| **Notes** | General observations and context |
+| **Links** | Related PRs, docs, resources |
+| **Decisions** | Key decisions made during this work |
+
+**Progress Auto-Calculation:** The progress percentage is automatically calculated from the Next Actions checkboxes. The dashboard counts `- [x]` (completed) vs total checkboxes to compute the percentage.
+
+**Example Accomplishments entries:**
+```markdown
+## Accomplishments
+- [2026-02-02 14:30] Completed initial API design
+- [2026-02-02 16:15] Fixed authentication bug in login flow
+- [2026-02-03 09:00] Added unit tests for user service
+```
+
+**Example Next Actions with progress:**
+```markdown
+## Next Actions
+- [x] Design API endpoints
+- [x] Implement authentication
+- [ ] Add error handling
+- [ ] Write documentation
+
+Progress: 50% (2/4 completed)
+```
+
 ## Operations
 
 ### Create Workspace

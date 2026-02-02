@@ -44,7 +44,8 @@ Manage tasks via natural language. Config: `~/.claude/workspace-path.txt` → WO
 **LIST** → Read `active.md`, sort: overdue → due → priority → created. Format: "1. [P1] Title (due: date) [status] #id"
 
 **COMPLETE** → Match by number/description/ID. Before archiving:
-1. If workspace exists at `workspace/{id}/PROGRESS.md`:
+1. If workspace exists at `workspace/{id}/`:
+   - Run `/workspace summarize` to update PROGRESS.md with final accomplishments
    - Read accomplishments section
    - Summarize key steps/solutions (1-2 sentences)
    - Append summary to task context

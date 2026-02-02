@@ -446,28 +446,29 @@ class WorkspaceVisualizer {
   
   parseProgressFile(content) {
     const statusMatch = content.match(/\*\*Status:\*\* ([^|]+)/);
-    const progressMatch = content.match(/\*\*Progress:\*\* (\d+)%/);
     const titleMatch = content.match(/# Progress: (.+)/);
     const focusMatch = content.match(/## Current Focus\s*\n([^\n#]+)/);
 
-    // Count completed phases from Next Actions
-    const phases = content.match(/- \[x\]/g) || [];
-    const totalPhases = (content.match(/- \[[x\s]\]/g) || []).length;
+    // Extract Next Actions section to count checkboxes
+    const nextActionsMatch = content.match(/## Next Actions\s*\n([\s\S]*?)(?=\n## |$)/);
+    const nextActionsContent = nextActionsMatch ? nextActionsMatch[1] : '';
 
-    // Use explicit progress if available, otherwise calculate from checkboxes
+    // Count completed vs total checkboxes in Next Actions only
+    const completedCheckboxes = (nextActionsContent.match(/- \[x\]/gi) || []).length;
+    const totalCheckboxes = (nextActionsContent.match(/- \[[x\s]\]/gi) || []).length;
+
+    // Auto-calculate progress from Next Actions checkboxes
     let progress = 0;
-    if (progressMatch) {
-      progress = parseInt(progressMatch[1], 10);
-    } else if (totalPhases > 0) {
-      progress = Math.round((phases.length / totalPhases) * 100);
+    if (totalCheckboxes > 0) {
+      progress = Math.round((completedCheckboxes / totalCheckboxes) * 100);
     }
 
     return {
       title: titleMatch?.[1]?.trim() || 'Unknown Task',
       status: statusMatch?.[1]?.trim() || 'In Progress',
       currentFocus: focusMatch?.[1]?.trim() || '',
-      completedPhases: phases.length,
-      totalPhases: totalPhases || 0,
+      completedPhases: completedCheckboxes,
+      totalPhases: totalCheckboxes,
       progress
     };
   }

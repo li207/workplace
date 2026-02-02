@@ -69,6 +69,7 @@ class WorkspaceDashboard {
         this.archivedTasks = data.archivedTasks || [];
 
         this.render();
+        this.updateStatus();
         console.log(`Loaded ${this.tasks.size} tasks, ${this.archivedTasks.length} archived`);
     }
 
@@ -119,19 +120,13 @@ class WorkspaceDashboard {
         });
 
         // Calculate overdue tasks
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = this.getTodayString();
         const overdueTasks = Array.from(this.tasks.values())
-            .filter(task => task.due && new Date(task.due) < today).length;
+            .filter(task => task.due && task.due < today).length;
 
         // Calculate due today
         const dueTodayTasks = Array.from(this.tasks.values())
-            .filter(task => {
-                if (!task.due) return false;
-                const dueDate = new Date(task.due);
-                dueDate.setHours(0, 0, 0, 0);
-                return dueDate.getTime() === today.getTime();
-            }).length;
+            .filter(task => task.due && task.due === today).length;
 
         container.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
@@ -213,20 +208,16 @@ class WorkspaceDashboard {
     }
 
     renderTask(task) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = this.getTodayString();
 
         let dueClass = '';
         let dueText = 'No deadline';
 
         if (task.due) {
-            const dueDate = new Date(task.due);
-            dueDate.setHours(0, 0, 0, 0);
-
-            if (dueDate < today) {
+            if (task.due < today) {
                 dueClass = 'overdue';
                 dueText = `Overdue (${task.due})`;
-            } else if (dueDate.getTime() === today.getTime()) {
+            } else if (task.due === today) {
                 dueClass = 'due-today';
                 dueText = `Due Today`;
             } else {
@@ -236,11 +227,24 @@ class WorkspaceDashboard {
 
         const statusClass = (task.taskStatus || 'Not Started').toLowerCase().replace(/\s+/g, '-');
 
+        // Build due date badge
+        let dueBadge = '';
+        if (task.due) {
+            if (dueClass === 'overdue') {
+                dueBadge = `<div style="background: #ff3b30; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">⚠ ${dueText}</div>`;
+            } else if (dueClass === 'due-today') {
+                dueBadge = `<div style="background: #ff9500; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">📅 ${dueText}</div>`;
+            } else {
+                dueBadge = `<div style="background: #e5e5ea; color: #636366; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;">${dueText}</div>`;
+            }
+        }
+
         return `
             <div class="task-card priority-${task.priority}" onclick="dashboard.openTaskModal('${task.id}', false)">
                 <div class="task-header">
                     <div class="task-title">${this.escapeHtml(task.title)}</div>
                     <div class="task-badges">
+                        ${dueBadge}
                         <div class="task-status ${statusClass}">${this.escapeHtml(task.taskStatus || 'Not Started')}</div>
                         <div class="task-priority ${task.priority}">${task.priority.toUpperCase()}</div>
                     </div>
@@ -249,7 +253,6 @@ class WorkspaceDashboard {
                 <div class="task-meta">
                     ID: ${task.id} &bull; Created: ${task.created}
                 </div>
-                <div class="task-due ${dueClass}">${dueText}</div>
                 ${task.tags && task.tags.length ?
                     `<div style="margin-top: 8px; font-size: 12px; color: #86868b;">
                         ${task.tags.map(tag => `<span style="background: #f2f2f7; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">${this.escapeHtml(tag)}</span>`).join('')}
@@ -314,8 +317,31 @@ class WorkspaceDashboard {
 
         const statusClass = (task.taskStatus || 'Not Started').toLowerCase().replace(/\s+/g, '-');
 
+        // Build due date banner if applicable
+        let dueBanner = '';
+        if (task.due && !isCompleted) {
+            const dueClass = this.getDueClass(task.due);
+            if (dueClass === 'overdue') {
+                dueBanner = `<div style="background: #ffebee; border: 1px solid #ffcdd2; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 600; color: #c62828;">Overdue</div>
+                        <div style="font-size: 13px; color: #c62828;">Was due on ${task.due}</div>
+                    </div>
+                </div>`;
+            } else if (dueClass === 'due-today') {
+                dueBanner = `<div style="background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px;">📅</span>
+                    <div>
+                        <div style="font-weight: 600; color: #e65100;">Due Today</div>
+                        <div style="font-size: 13px; color: #e65100;">${task.due}</div>
+                    </div>
+                </div>`;
+            }
+        }
+
         // Build metadata section
-        let content = `
+        let content = dueBanner + `
             <div class="modal-section">
                 <h4>Task Details</h4>
                 <div class="task-meta-grid">
@@ -334,7 +360,7 @@ class WorkspaceDashboard {
                     ${isCompleted ? `
                         <div class="meta-item">
                             <span class="meta-label">Completed</span>
-                            <span class="meta-value">${task.completed || 'Unknown'}</span>
+                            <span class="meta-value" style="color: #34c759; font-weight: 600;">${task.completed || 'Unknown'}</span>
                         </div>
                     ` : `
                         <div class="meta-item">
@@ -345,7 +371,7 @@ class WorkspaceDashboard {
                     ${task.due ? `
                         <div class="meta-item">
                             <span class="meta-label">Due Date</span>
-                            <span class="meta-value ${this.getDueClass(task.due)}">${task.due}</span>
+                            <span class="meta-value ${this.getDueClass(task.due)}" style="font-weight: 600;">${task.due}</span>
                         </div>
                     ` : ''}
                 </div>
@@ -379,7 +405,28 @@ class WorkspaceDashboard {
             const response = await fetch(`/api/workspace/${taskId}/progress`);
             if (response.ok) {
                 const progress = await response.json();
+                // If task is completed, show 100% progress
+                if (isCompleted) {
+                    progress.progress = 100;
+                    progress.status = 'Completed';
+                }
                 content += this.renderProgressSection(progress);
+            } else if (isCompleted) {
+                // Completed task without workspace - show 100% completion
+                content += `
+                    <div class="modal-section">
+                        <h4>Workspace Progress</h4>
+                        <div class="progress-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <span style="font-weight: 600; color: #34c759;">100% Complete</span>
+                                <span style="font-size: 12px; color: #86868b;">Completed</span>
+                            </div>
+                            <div class="progress-bar" style="height: 8px;">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             } else {
                 content += `
                     <div class="modal-section">
@@ -407,15 +454,19 @@ class WorkspaceDashboard {
         modalOverlay.classList.add('active');
     }
 
+    getTodayString() {
+        const today = new Date();
+        return today.getFullYear() + '-' +
+               String(today.getMonth() + 1).padStart(2, '0') + '-' +
+               String(today.getDate()).padStart(2, '0');
+    }
+
     getDueClass(due) {
         if (!due) return '';
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const dueDate = new Date(due);
-        dueDate.setHours(0, 0, 0, 0);
+        const today = this.getTodayString();
 
-        if (dueDate < today) return 'overdue';
-        if (dueDate.getTime() === today.getTime()) return 'due-today';
+        if (due < today) return 'overdue';
+        if (due === today) return 'due-today';
         return '';
     }
 

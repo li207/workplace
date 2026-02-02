@@ -48,6 +48,38 @@ UPDATE PROGRESS.md at these checkpoints:
 Format: Append to relevant section with timestamp [YYYY-MM-DD HH:MM]
 ```
 
+## Generated PROGRESS.md Template
+```markdown
+# Progress: {title}
+
+**Status:** Not Started | **Progress:** 0%
+
+## Current Focus
+{What you're currently working on}
+
+## Next Actions
+- [ ] {First action item}
+- [ ] {Second action item}
+- [ ] {Third action item}
+
+## Accomplishments
+{Timestamped entries will be added here as work progresses}
+
+## Blockers
+None
+
+## Notes
+{General observations, thoughts, context}
+
+## Links
+{Related PRs, docs, resources}
+
+## Decisions
+{Key decisions made during this work}
+```
+
+**Progress Calculation:** Progress percentage is auto-calculated from Next Actions checkboxes. Count `[x]` completed vs total checkboxes.
+
 ## Paths
 - Workspaces: `WORKSPACE_DATA_DIR/workspace/{task-id}/`
 - TODO: `WORKSPACE_DATA_DIR/todo/active.md`
