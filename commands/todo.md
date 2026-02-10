@@ -11,6 +11,8 @@ args:
 
 Manage tasks via natural language. Config: `~/.claude/workspace-path.txt` → WORKSPACE_DATA_DIR
 
+**Timezone: All dates must be calculated in PST (America/Los_Angeles). When resolving relative dates like "tomorrow", "friday", "in 3 days", use the current time in PST to determine the correct date.**
+
 ## Command: {{command}}
 
 **Intents:** create/add/new | list/show | done/complete | update/change | review/status | help
