@@ -19,6 +19,7 @@ The Workspace module creates and manages isolated folder environments for indivi
 | `workspace-data/workspace/{task-id}/` | Individual task workspace |
 | `workspace-data/workspace/{task-id}/README.md` | Workspace overview with task details |
 | `workspace-data/workspace/{task-id}/CLAUDE.md` | Task context for Claude sessions |
+| `workspace-data/workspace/{task-id}/PLAN.md` | Co-authored plan (Claude drafts, user reviews) |
 | `workspace-data/workspace/{task-id}/PROGRESS.md` | Progress tracking and status updates |
 | `workspace-data/workspace/{task-id}/docs/` | Documentation directory |
 | `workspace-data/workspace/{task-id}/logs/` | Log files and investigation notes |
@@ -51,6 +52,7 @@ The Workspace module creates and manages isolated folder environments for indivi
 {task-id}/
 ├── README.md           # Workspace overview
 ├── CLAUDE.md           # Task context for Claude
+├── PLAN.md             # Co-authored plan
 ├── PROGRESS.md         # Progress tracking
 ├── docs/               # Documentation
 │   ├── requirements.md
@@ -66,9 +68,23 @@ The Workspace module creates and manages isolated folder environments for indivi
     └── prototypes/
 ```
 
+### PLAN.md Structure
+
+The PLAN.md file is the core collaboration artifact between user and Claude:
+
+| Section | Purpose |
+|---------|---------|
+| **Objective** | What this task aims to accomplish |
+| **Approach** | High-level strategy — Claude drafts, user reviews via Obsidian |
+| **Design** | Technical details, architecture decisions |
+| **Open Questions** | Unresolved items needing user input |
+| **Decisions Log** | Timestamped record of decisions and rationale |
+
+**Co-authoring workflow:** Claude drafts the plan during workspace creation or planning sessions. The user reviews and edits via Obsidian. Claude re-reads PLAN.md at session start to pick up any changes.
+
 ### PROGRESS.md Structure
 
-The PROGRESS.md file tracks workspace progress with 7 standardized sections:
+The PROGRESS.md file tracks workspace progress with a structured Status block and 7 sections:
 
 | Section | Purpose |
 |---------|---------|
@@ -79,6 +95,17 @@ The PROGRESS.md file tracks workspace progress with 7 standardized sections:
 | **Notes** | General observations and context |
 | **Links** | Related PRs, docs, resources |
 | **Decisions** | Key decisions made during this work |
+
+**Status Block (top of PROGRESS.md):**
+```markdown
+## Status
+- **State**: Not Started | In Progress | Blocked | Ready for Review | Done
+- **Branch**: {git branch if applicable}
+- **Last session**: YYYY-MM-DD HH:MM
+- **Summary**: {One-line summary of current state}
+- **Next action**: {Single most important next step}
+- **Blocked on**: {Blocker or "Nothing"}
+```
 
 **Progress Auto-Calculation:** The progress percentage is automatically calculated from the Next Actions checkboxes. The dashboard counts `- [x]` (completed) vs total checkboxes to compute the percentage.
 
@@ -131,6 +158,9 @@ Create isolated workspace for a task using natural language.
 **What gets created:**
 - **Folder**: `workspace-data/workspace/{task-id}/`
 - **README**: Workspace overview with task context
+- **PLAN.md**: Co-authored plan template
+- **PROGRESS.md**: Progress tracking with structured Status block
+- **CLAUDE.md**: Task context with session-start and auto-update rules
 - **Structure**: Standard docs/, logs/, scratch/ directories
 - **Integration**: Links to original task in TODO system
 
@@ -269,6 +299,16 @@ Workspaces are automatically integrated with the TODO system:
 3. **Quick access:** `/workspace open` to navigate to workspace
 4. **Review progress:** `/workspace list` to see all active workspaces
 5. **Clean up:** Archive workspace when task is completed
+
+## Obsidian Integration
+
+The `workspace-data/` directory serves as an Obsidian vault root. Open it as a vault in Obsidian to:
+
+- **Review and edit PLAN.md** — co-author plans with Claude
+- **Monitor PROGRESS.md** — track status and accomplishments
+- **Browse workspaces** — navigate between task workspaces visually
+
+The `.obsidian/` config directory is gitignored in the framework repo. Each user's Obsidian settings remain local.
 
 ## Archiving
 

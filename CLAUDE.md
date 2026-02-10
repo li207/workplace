@@ -16,6 +16,7 @@ Personal task management with natural language commands.
 - **Tasks**: `WORKSPACE_DATA_DIR/todo/active.md`
 - **Archive**: `WORKSPACE_DATA_DIR/todo/archive/YYYY-MM-DD.md`
 - **Workspaces**: `WORKSPACE_DATA_DIR/workspace/{task-id}/`
+- **Obsidian vault**: `workspace-data/` (open as vault root)
 
 ## Task Format
 
@@ -36,7 +37,7 @@ Personal task management with natural language commands.
 /todo mark first task as done
 /todo review
 
-/workspace create for task abc123
+/workspace create for task abc123  # creates README, CLAUDE.md, PLAN.md, PROGRESS.md
 /workspace status
 /workspace summarize
 

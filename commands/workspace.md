@@ -17,7 +17,7 @@ Manage task workspaces. Config: `~/.claude/workspace-path.txt` → WORKSPACE_DAT
 
 ## Operations
 
-**CREATE** → Parse task ref (ID/position/description), create `workspace/{task-id}/` with: README.md, CLAUDE.md, PROGRESS.md, docs/, logs/, scratch/
+**CREATE** → Parse task ref (ID/position/description), create `workspace/{task-id}/` with: README.md, CLAUDE.md, PLAN.md, PROGRESS.md, docs/, logs/, scratch/
 
 **OPEN** → Resolve task ID, switch to workspace (auto-create if needed), read CLAUDE.md for context
 
@@ -46,13 +46,44 @@ UPDATE PROGRESS.md at these checkpoints:
 - Blocker encountered or resolved
 - Before ending session
 Format: Append to relevant section with timestamp [YYYY-MM-DD HH:MM]
+
+## Session Start Rule
+ALWAYS re-read PLAN.md and PROGRESS.md before starting any work.
+Check for user edits made via Obsidian since last session.
+```
+
+## Generated PLAN.md Template
+```markdown
+# Plan: {title}
+
+## Objective
+{What this task aims to accomplish}
+
+## Approach
+{High-level strategy — Claude drafts, user reviews}
+
+## Design
+{Technical details, architecture decisions}
+
+## Open Questions
+{Unresolved items needing user input}
+
+## Decisions Log
+| Date | Decision | Rationale |
+|------|----------|-----------|
 ```
 
 ## Generated PROGRESS.md Template
 ```markdown
 # Progress: {title}
 
-**Status:** Not Started | **Progress:** 0%
+## Status
+- **State**: Not Started
+- **Branch**: {git branch if applicable}
+- **Last session**: {date}
+- **Summary**: Workspace created
+- **Next action**: Review PLAN.md and define approach
+- **Blocked on**: Nothing
 
 ## Current Focus
 {What you're currently working on}

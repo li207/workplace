@@ -40,7 +40,7 @@ Task-specific isolated environments.
 
 **Intents:** create | open | status | summarize | list | clean | help
 
-**Creates:** README.md, CLAUDE.md, PROGRESS.md, docs/, logs/, scratch/
+**Creates:** README.md, CLAUDE.md, PLAN.md, PROGRESS.md, docs/, logs/, scratch/
 
 ### /visual
 Dashboard visualization server.
@@ -70,9 +70,40 @@ Dashboard visualization server.
   - context: Implementation notes
 ```
 
+### Workspace PLAN.md
+```markdown
+# Plan: {task-title}
+
+## Objective
+{What this task aims to accomplish}
+
+## Approach
+{High-level strategy — Claude drafts, user reviews}
+
+## Design
+{Technical details, architecture decisions}
+
+## Open Questions
+{Unresolved items needing user input}
+
+## Decisions Log
+| Date | Decision | Rationale |
+|------|----------|-----------|
+```
+
+**Co-authoring workflow:** Claude drafts the plan during workspace creation. The user reviews and edits via Obsidian. Claude re-reads PLAN.md at session start to pick up changes.
+
 ### Workspace PROGRESS.md
 ```markdown
 # Progress: {task-title}
+
+## Status
+- **State**: Not Started | In Progress | Blocked | Ready for Review | Done
+- **Branch**: {git branch if applicable}
+- **Last session**: YYYY-MM-DD HH:MM
+- **Summary**: {One-line summary of current state}
+- **Next action**: {Single most important next step}
+- **Blocked on**: {Blocker or "Nothing"}
 
 ## Accomplishments
 - [YYYY-MM-DD HH:MM] Completed X
@@ -86,6 +117,17 @@ Working on Y
 ## Blockers
 None
 ```
+
+### Session Start Rules
+
+At the beginning of each workspace session, Claude must:
+1. Re-read PLAN.md and PROGRESS.md before starting any work
+2. Check for user edits made via Obsidian since the last session
+3. Update the Status block's "Last session" timestamp
+
+### Obsidian Vault
+
+The `workspace-data/` directory is designed to function as an Obsidian vault root. Open it as a vault in Obsidian to review plans, track progress, and co-author with Claude. The `.obsidian/` directory is gitignored.
 
 ## Extension Pattern
 

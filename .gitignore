@@ -12,6 +12,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Obsidian
+.obsidian/
+
 # Temporary files
 *.tmp
 *.temp
