@@ -27,7 +27,7 @@ echo "→ Installing global commands"
 if [ -d "$WORKSPACE_DIR/commands" ]; then
     cp "$WORKSPACE_DIR/commands"/*.md "$CLAUDE_DIR/commands/" 2>/dev/null || true
     COMMAND_COUNT=$(ls -1 "$WORKSPACE_DIR/commands"/*.md 2>/dev/null | wc -l | tr -d ' ')
-    echo "  ✓ $COMMAND_COUNT commands installed globally (todo, visual, workspace)"
+    echo "  ✓ $COMMAND_COUNT commands installed globally (task, visual)"
 else
     echo "  ⚠️  No commands directory found"
 fi
@@ -38,7 +38,7 @@ if [ ! -d "$WORKSPACE_DIR/workspace-data" ]; then
     # Prompt for workspace-data repo URL
     echo "  Enter workspace-data repository URL (or press Enter to create locally):"
     read -r DATA_REPO_URL
-    
+
     if [ -n "$DATA_REPO_URL" ]; then
         echo "  Cloning workspace-data from: $DATA_REPO_URL"
         git clone "$DATA_REPO_URL" "$WORKSPACE_DIR/workspace-data"
@@ -55,18 +55,23 @@ else
 fi
 
 # Create necessary data directories in workspace-data
-mkdir -p "$WORKSPACE_DIR/workspace-data/todo/archive"
-mkdir -p "$WORKSPACE_DIR/workspace-data/workspace/archive"
+mkdir -p "$WORKSPACE_DIR/workspace-data/active"
+mkdir -p "$WORKSPACE_DIR/workspace-data/archive/weeks"
 
-# Create initial TODO file if it doesn't exist
-if [ ! -f "$WORKSPACE_DIR/workspace-data/todo/active.md" ]; then
-    cat > "$WORKSPACE_DIR/workspace-data/todo/active.md" << 'EOF'
-# Active Tasks
+# Create initial index.md if it doesn't exist
+if [ ! -f "$WORKSPACE_DIR/workspace-data/index.md" ]; then
+    cat > "$WORKSPACE_DIR/workspace-data/index.md" << 'EOF'
+# Workspace
 
-Tasks currently being worked on.
+> Last updated: —
 
----
+## Active Tasks
 
+No active tasks. Create one with `/task create`.
+
+## This Week
+- Completed: 0 tasks
+- In progress: 0 tasks
 EOF
 fi
 
@@ -77,14 +82,13 @@ echo ""
 echo "✅ Bootstrap complete!"
 echo ""
 echo "Next steps:"
-echo "1. Use '/todo review' from anywhere to get started"
-echo "2. Try: /todo create \"Test the system\" high priority"
+echo "1. Use '/task review' from anywhere to get started"
+echo "2. Try: /task create \"Test the system\" high priority"
 echo "3. Sync data: cd workspace-data && git remote add origin <your-private-repo>"
 echo ""
 echo "Available commands:"
-echo "- /todo      - Natural language task management"
-echo "- /visual    - Real-time workspace visualization"
-echo "- /workspace - Task-specific isolated environments"
+echo "- /task    - Unified task & workspace management"
+echo "- /visual  - Real-time dashboard visualization"
 echo ""
 echo "Utilities:"
 echo "- ./scripts/sync.sh - Sync both framework and data repos"

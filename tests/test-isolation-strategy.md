@@ -1,7 +1,7 @@
 # Test Isolation Strategy
 
 ## Problem
-Testing agents that manipulate real TODO and workspace files could:
+Testing agents that manipulate real task files could:
 - Corrupt production data
 - Create test artifacts in live workspace
 - Interfere with actual work
@@ -18,8 +18,20 @@ TEST_DATA_DIR="/tmp/workspace-test-$(date +%s)"
 export WORKSPACE_DATA_DIR="$TEST_DATA_DIR"
 
 # Create test structure
-mkdir -p "$TEST_DATA_DIR"/{todo,workspace}
-echo "# Test Tasks" > "$TEST_DATA_DIR/todo/active.md"
+mkdir -p "$TEST_DATA_DIR"/active/test01/{docs,logs,scratch}
+mkdir -p "$TEST_DATA_DIR"/archive/weeks
+
+# Create test task
+cat > "$TEST_DATA_DIR/active/test01/task.md" << 'EOF'
+# Test task
+- **id**: test01
+- **priority**: p1
+- **created**: 2026-02-01
+- **tags**: [testing]
+
+## Context
+Test task for validation
+EOF
 
 # Run tests in isolation
 ./test-suite.sh
@@ -83,28 +95,40 @@ TEST_ID="test-$(date +%s)-$$"
 TEST_DIR="/tmp/workspace-$TEST_ID"
 export WORKSPACE_DATA_DIR="$TEST_DIR"
 
-echo "🧪 Creating test environment: $TEST_DIR"
+echo "Creating test environment: $TEST_DIR"
 
-# Setup test workspace structure
-mkdir -p "$TEST_DIR"/{todo/archive,workspace/archive}
-echo "# Test Active Tasks" > "$TEST_DIR/todo/active.md"
+# Setup test structure (unified task layout)
+mkdir -p "$TEST_DIR"/active/test01/{docs,logs,scratch}
+mkdir -p "$TEST_DIR"/archive/weeks
+
+# Create test task
+cat > "$TEST_DIR/active/test01/task.md" << 'EOF'
+# Test task alpha
+- **id**: test01
+- **priority**: p1
+- **created**: 2026-02-01
+- **tags**: [testing]
+
+## Context
+Test task for framework validation
+EOF
 
 # Override workspace config for this session
-echo "WORKSPACE_DIR=/Users/lizhongzhang/Projects/workspace" > ~/.claude/test-workspace-path.txt
-echo "WORKSPACE_DATA_DIR=$TEST_DIR" >> ~/.claude/test-workspace-path.txt
+cat > ~/.claude/test-workspace-path.txt << EOF
+WORKSPACE_DIR=/Users/lizhongzhang/Projects/workspace
+WORKSPACE_DATA_DIR=$TEST_DIR
+EOF
 
 # Run tests
-echo "🔬 Running tests..."
-./tests/todo-agent-test.sh
-./tests/workspace-agent-test.sh  
-./tests/integration-test.sh
+echo "Running tests..."
+./tests/test-suite.sh
 
 # Cleanup
-echo "🧹 Cleaning up test environment..."
+echo "Cleaning up test environment..."
 rm -rf "$TEST_DIR"
 rm -f ~/.claude/test-workspace-path.txt
 
-echo "✅ Tests complete"
+echo "Tests complete"
 ```
 
 ## Test Data Patterns
@@ -112,19 +136,15 @@ echo "✅ Tests complete"
 ### Synthetic Test Tasks
 ```bash
 # Create predictable test data
-cat > "$TEST_DIR/todo/active.md" << EOF
-# Active Tasks
+cat > "$TEST_DIR/active/test01/task.md" << 'EOF'
+# Test task alpha
+- **id**: test01
+- **priority**: p1
+- **created**: 2026-02-01
+- **tags**: [testing]
 
-- [ ] Test task alpha #id:test01
-  - priority: p1
-  - created: 2026-02-01
-  - context: Test task for framework validation
-
-- [ ] Test task beta #id:test02  
-  - priority: p2
-  - created: 2026-02-01
-  - due: 2026-02-03
-  - context: Another test task with due date
+## Context
+Test task for framework validation
 EOF
 ```
 
@@ -132,18 +152,20 @@ EOF
 ```bash
 # Verify task creation
 function test_task_creation() {
-    local initial_count=$(grep -c "^- \[ \]" "$WORKSPACE_DATA_DIR/todo/active.md")
-    
+    local initial_count
+    initial_count=$(ls -1 "$WORKSPACE_DATA_DIR/active/" 2>/dev/null | wc -l)
+
     # Run command
-    /todo create "New test task"
-    
+    /task create "New test task"
+
     # Verify result
-    local final_count=$(grep -c "^- \[ \]" "$WORKSPACE_DATA_DIR/todo/active.md")
-    
+    local final_count
+    final_count=$(ls -1 "$WORKSPACE_DATA_DIR/active/" 2>/dev/null | wc -l)
+
     if (( final_count == initial_count + 1 )); then
-        echo "✅ Task creation test passed"
+        echo "Task creation test passed"
     else
-        echo "❌ Task creation test failed: expected $((initial_count + 1)), got $final_count"
+        echo "Task creation test failed: expected $((initial_count + 1)), got $final_count"
         return 1
     fi
 }
@@ -154,20 +176,28 @@ function test_task_creation() {
 Instead of testing implementation details, test observable behaviors:
 
 ```bash
-# Test: TODO completion archives workspace
-function test_todo_workspace_integration() {
+# Test: Task completion archives task folder
+function test_task_archive_integration() {
     # Setup
-    mkdir -p "$WORKSPACE_DATA_DIR/workspace/test01"
-    echo "test content" > "$WORKSPACE_DATA_DIR/workspace/test01/test.txt"
-    
+    mkdir -p "$WORKSPACE_DATA_DIR/active/test01"/{docs,logs,scratch}
+    cat > "$WORKSPACE_DATA_DIR/active/test01/task.md" << 'EOF'
+# Test task
+- **id**: test01
+- **priority**: p1
+- **created**: 2026-02-01
+
+## Context
+Test task
+EOF
+
     # Action
-    echo "/todo complete test01" | claude-code
-    
+    echo "/task done test01" | claude-code
+
     # Verify
-    if [[ -d "$WORKSPACE_DATA_DIR/workspace/archive/test01" ]]; then
-        echo "✅ Workspace archived correctly"
+    if [[ -d "$WORKSPACE_DATA_DIR/archive/test01" ]]; then
+        echo "Task archived correctly"
     else
-        echo "❌ Workspace not archived"
+        echo "Task not archived"
         return 1
     fi
 }

@@ -6,11 +6,11 @@ An intelligent, extensible workspace framework for Claude AI with natural langua
 
 Workspace is a modular framework that brings intelligent task management and data organization to Claude AI. It features:
 
-- **🧠 Natural Language Processing** — Talk to your tasks naturally
-- **🔒 Privacy-First Architecture** — Your data stays separate and private  
-- **📁 Human-Readable Storage** — Everything in markdown files
-- **🔧 Extensible Design** — Add new commands and modules
-- **👥 Multi-User Ready** — Teams share framework, individuals keep private data
+- **Natural Language Processing** — Talk to your tasks naturally
+- **Privacy-First Architecture** — Your data stays separate and private
+- **Human-Readable Storage** — Everything in markdown files
+- **Extensible Design** — Add new commands and modules
+- **Multi-User Ready** — Teams share framework, individuals keep private data
 
 ## Quick Start
 
@@ -28,23 +28,22 @@ The bootstrap will ask for your workspace-data repository:
 ### 2. Start Using Natural Language Commands
 ```bash
 # Create tasks naturally
-/todo create bug fix task, urgent, due tomorrow
+/task create bug fix task, urgent, due tomorrow
 
-# Create isolated workspace for task
-/workspace create workspace for task 1769a4
+# Open a task workspace
+/task open first task
 
-# Check your workload  
-/todo review
+# Check your workload
+/task review
 
-# See all tasks and workspaces
-/todo list
-/workspace list
+# See all tasks
+/task list
 
 # Complete work
-/todo mark first task as done
+/task done first task
 
 # Get help anytime
-/todo help
+/task help
 ```
 
 ### 3. Test the Framework
@@ -53,42 +52,40 @@ The bootstrap will ask for your workspace-data repository:
 ./tests/test-runner.sh
 
 # Tests run in isolation - zero risk to your data
-# All tests should pass ✅
+# All tests should pass
 ```
 
 ## Architecture
 
 ### Framework Structure
 ```
-workspace/                    # 🔓 Public Framework (this repo)
+workspace/                    # Public Framework (this repo)
 ├── commands/                 # Global Claude commands
-│   ├── todo.md              # Natural language TODO processor
-│   ├── visual.md            # Visualization dashboard
-│   └── workspace.md         # Natural language workspace manager
+│   ├── task.md              # Unified task & workspace management
+│   └── visual.md            # Visualization dashboard
 ├── modules/                  # Module definitions
-│   ├── todo/                # TODO system documentation
-│   ├── visual/              # Visualization server
-│   └── workspace/           # Workspace system documentation
+│   ├── task/                # Task system documentation
+│   └── visual/              # Visualization server
 ├── scripts/                  # Automation tools
 │   └── sync.sh              # Dual-repo sync
 ├── bootstrap.sh             # Setup script
 ├── instructions.md          # Claude context
 └── CLAUDE.md                # Quick reference
 
-workspace-data/              # 🔒 Private Data (separate repo)
-├── todo/
-│   ├── active.md           # Current tasks
-│   └── archive/            # Completed tasks by date
-│       └── 2026-01-31.md
-└── workspace/              # Isolated task workspaces
-    ├── {task-id}/          # Task-specific workspace
-    │   ├── README.md       # Workspace overview
-    │   ├── CLAUDE.md       # Task context for Claude
-    │   ├── PROGRESS.md     # Progress tracking
-    │   ├── docs/           # Documentation
-    │   ├── logs/           # Investigation logs
-    │   └── scratch/        # Temporary files
-    └── archive/            # Archived workspaces
+workspace-data/              # Private Data (separate repo)
+├── index.md                 # Auto-generated canonical view
+├── active/                  # Active task workspaces
+│   └── {task-id}/
+│       ├── task.md          # Metadata (priority, due, tags, context)
+│       ├── CLAUDE.md        # Task context for Claude
+│       ├── PLAN.md          # Co-authored plan
+│       ├── PROGRESS.md      # Progress tracking
+│       ├── docs/            # Documentation
+│       ├── logs/            # Investigation logs
+│       └── scratch/         # Temporary files
+└── archive/                 # Completed tasks
+    ├── {task-id}/           # Archived task folder
+    └── weeks/               # Weekly summaries
 ```
 
 ### Privacy Model
@@ -98,47 +95,30 @@ workspace-data/              # 🔒 Private Data (separate repo)
 
 ## Available Commands
 
-### 🗣️ Natural Language TODO
-Intelligent task management that understands conversational commands:
+### /task — Unified Task & Workspace Management
+Intelligent task management with isolated workspaces, natural language processing:
 
 ```bash
-# Creating tasks
-/todo create API integration, high priority, needs team review
-/todo add client meeting friday, include budget discussion
-/todo new security audit task, reference OWASP guidelines
+# Creating tasks (auto-creates workspace folder)
+/task create API integration, high priority, needs team review
+/task add client meeting friday, include budget discussion
+/task new security audit task, reference OWASP guidelines
 
-# Managing tasks  
-/todo list                          # See numbered tasks
-/todo mark task 2 as done           # Complete by number
-/todo change first task to urgent   # Update priority
-/todo move deadline to next week    # Reschedule
+# Working on tasks
+/task open first task                   # Switch context to task
+/task plan auth bug                     # Co-author PLAN.md
+
+# Managing tasks
+/task list                              # See active tasks
+/task done first task                   # Archive completed task
+/task update priority to p0             # Change metadata
+/task update progress: finished tests   # Log progress
 
 # Getting insights
-/todo review                        # Summary with overdue alerts
-/todo what's due this week?         # Filtered view
-/todo show my current workload      # Status overview
+/task review                            # Summary with overdue alerts
 ```
 
-### 📁 Natural Language Workspaces
-Isolated task-specific environments that understand conversational commands:
-
-```bash
-# Creating workspaces
-/workspace create workspace for task 1769a4
-/workspace make debug environment for auth bug
-/workspace setup docs folder for API task
-
-# Accessing workspaces
-/workspace open 1769a4              # Navigate to workspace
-/workspace list                     # See all workspaces
-/workspace status                   # Show progress
-
-# Managing workspaces
-/workspace summarize                # Update progress notes
-/workspace clean completed          # Archive finished workspaces
-```
-
-### 📊 Visual Dashboard
+### /visual — Dashboard
 Real-time workspace visualization and monitoring:
 
 ```bash
@@ -176,7 +156,7 @@ gh repo create my-workspace --private --source=. --push
 # No remote sync needed
 ```
 
-## Extending Workplace
+## Extending Workspace
 
 ### Adding New Commands
 1. Create `commands/newcommand.md` with natural language processing
@@ -191,15 +171,18 @@ gh repo create my-workspace --private --source=. --push
 
 ## Data Format
 
-Tasks are stored with clean titles and rich context:
+Tasks are stored with structured metadata in their own folder:
 
 ```markdown
-- [ ] Fix authentication bug #id:abc123
-  - priority: high
-  - created: 2026-01-31
-  - due: 2026-02-02
-  - tags: [security, backend]
-  - context: Requires database migration, coordinate with DevOps team, reference security audit in /docs/security-review.md
+# Fix authentication bug
+- **id**: abc123
+- **priority**: p1
+- **created**: 2026-01-31
+- **due**: 2026-02-02
+- **tags**: [security, backend]
+
+## Context
+Requires database migration, coordinate with DevOps team
 ```
 
 ## Syncing

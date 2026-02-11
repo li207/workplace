@@ -8,21 +8,21 @@ The Visual module provides a web-based dashboard that monitors workspace files a
 
 ## Features
 
-### 🔍 Real-time Monitoring
-- **File Watcher**: Monitors todo and workspace markdown files
+### Real-time Monitoring
+- **File Watcher**: Monitors task and progress markdown files
 - **Live Updates**: WebSocket-based real-time dashboard updates
 - **Activity Feed**: Shows file changes and workspace activity
 
-### 📊 Dashboard Components
+### Dashboard Components
 - **Active Tasks**: Priority-sorted task list with due dates
-- **Workspace Status**: Progress tracking with visual indicators  
+- **Task Progress**: Progress tracking with visual indicators
 - **Activity Timeline**: Recent file changes and updates
 - **Overview Metrics**: Task distribution and progress analytics
 
-### 🎯 Key Benefits
+### Key Benefits
 - **Instant Awareness**: See workspace status at a glance
 - **Progress Tracking**: Visual progress bars and completion metrics
-- **Activity Monitoring**: Track what's happening across workspaces
+- **Activity Monitoring**: Track what's happening across tasks
 - **Non-intrusive**: Runs in background, updates automatically
 
 ## Usage
@@ -33,7 +33,7 @@ The Visual module provides a web-based dashboard that monitors workspace files a
 /visual start
 
 # Quick status and open browser
-/visual 
+/visual
 
 # Stop the dashboard server
 /visual stop
@@ -59,14 +59,14 @@ The Visual module provides a web-based dashboard that monitors workspace files a
 The dashboard displays a 2x2 grid with:
 
 1. **Active Tasks** - Current tasks with priorities and due dates
-2. **Workspaces** - Workspace status and progress indicators
+2. **Task Progress** - Progress indicators from PROGRESS.md
 3. **Activity Feed** - Real-time file change notifications
 4. **Overview** - Summary metrics and analytics
 
 ## Technical Architecture
 
 ### File Monitoring
-- **Patterns**: `todo/*.md`, `workspace/*/PROGRESS.md`, `workspace/*/README.md`
+- **Patterns**: `active/*/task.md`, `active/*/PROGRESS.md`, `active/*/CLAUDE.md`
 - **Events**: File add, change, delete
 - **Processing**: Parse markdown to extract structured data
 
@@ -93,23 +93,25 @@ WORKSPACE_DATA_DIR=/path/to/workspace-data
 
 ## Data Sources
 
-### TODO Files
-- `workspace-data/todo/active.md` - Active task list
-- `workspace-data/todo/archive/*.md` - Completed tasks
+### Task Files
+- `workspace-data/active/*/task.md` - Active task metadata
+- `workspace-data/archive/*/task.md` - Completed tasks (recent)
 
-### Workspace Files
-- `workspace-data/workspace/*/PROGRESS.md` - Progress tracking
-- `workspace-data/workspace/*/README.md` - Workspace metadata
-- `workspace-data/workspace/*/docs/**` - Documentation changes
-- `workspace-data/workspace/*/logs/**` - Investigation logs
+### Progress Files
+- `workspace-data/active/*/PROGRESS.md` - Progress tracking
+- `workspace-data/active/*/CLAUDE.md` - Task context
+- `workspace-data/active/*/docs/**` - Documentation changes
+- `workspace-data/active/*/logs/**` - Investigation logs
 
 ## API Endpoints
 
 When running, the server exposes:
 - `GET /` - Dashboard web interface
 - `GET /api/tasks` - Current tasks as JSON
-- `GET /api/workspaces` - Workspace status as JSON  
+- `GET /api/workspaces` - Task progress as JSON
 - `GET /api/status` - Server status and metrics
+- `GET /api/archived-tasks` - Recently completed tasks
+- `GET /api/workspace/:taskId/progress` - Individual task progress
 - `WS /` - WebSocket for real-time updates
 
 ## Installation

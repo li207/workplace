@@ -6,40 +6,39 @@ Personal task management with natural language commands.
 
 | Command | Purpose |
 |---------|---------|
-| `/todo` | Task management (create, list, complete, review) |
-| `/workspace` | Task-specific isolated environments |
+| `/task` | Unified task & workspace management (create, list, open, done, update, plan, review) |
 | `/visual` | Real-time dashboard visualization |
 
 ## Data Paths
 
 - **Config**: `~/.claude/workspace-path.txt` → WORKSPACE_DATA_DIR
-- **Tasks**: `WORKSPACE_DATA_DIR/todo/active.md`
-- **Archive**: `WORKSPACE_DATA_DIR/todo/archive/YYYY-MM-DD.md`
-- **Workspaces**: `WORKSPACE_DATA_DIR/workspace/{task-id}/`
-- **Obsidian vault**: `workspace-data/` (open as vault root)
+- **Index**: `WORKSPACE_DATA_DIR/index.md`
+- **Active tasks**: `WORKSPACE_DATA_DIR/active/{task-id}/`
+- **Archive**: `WORKSPACE_DATA_DIR/archive/{task-id}/`
+- **Weekly summaries**: `WORKSPACE_DATA_DIR/archive/weeks/`
+- **Obsidian vault**: `workspace-data/` (open as vault root, index.md is entry point)
 
-## Task Format
+## Task Folder Structure
 
-```markdown
-- [ ] Task title #id:abc123
-  - priority: p0|p1|p2|p3
-  - created: YYYY-MM-DD
-  - due: YYYY-MM-DD
-  - tags: [tag1, tag2]
-  - context: Details, requirements, notes
+```
+active/{task-id}/
+├── task.md             ← metadata (priority, due, tags, context)
+├── PLAN.md
+├── PROGRESS.md
+├── CLAUDE.md
+├── docs/
+├── logs/
+└── scratch/
 ```
 
 ## Quick Examples
 
 ```bash
-/todo create fix auth bug, urgent, due tomorrow
-/todo list
-/todo mark first task as done
-/todo review
-
-/workspace create for task abc123  # creates README, CLAUDE.md, PLAN.md, PROGRESS.md
-/workspace status
-/workspace summarize
+/task create fix auth bug, urgent, due tomorrow
+/task list
+/task open first task
+/task done auth bug
+/task review
 
 /visual start
 ```

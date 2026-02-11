@@ -1,6 +1,6 @@
 # Agent Testing Framework
 
-Automated testing framework for TODO, workspace, and visual agents with complete isolation from production data.
+Automated testing framework for task and visual agents with complete isolation from production data.
 
 ## Quick Start
 
@@ -15,10 +15,10 @@ Automated testing framework for TODO, workspace, and visual agents with complete
 ## Test Coverage
 
 ### Core Tests
-- **TODO test data setup** - Validates synthetic test task creation
-- **TODO file structure** - Verifies active.md and archive/ structure
-- **Workspace directory structure** - Checks workspace and archive directories
-- **Workspace creation capability** - Tests workspace folder creation
+- **Task test data setup** - Validates synthetic test task creation in `active/{id}/task.md`
+- **Task folder structure** - Verifies `active/{id}/` has task.md, PROGRESS.md, docs/, logs/, scratch/
+- **Index.md generation** - Checks index.md exists with Active Tasks table
+- **PROGRESS.md state parsing** - Validates `**State**:` field is parseable
 - **Production data isolation** - Ensures zero contamination
 
 ### Isolation Strategy
@@ -44,11 +44,11 @@ To add new tests, edit `test-runner.sh`:
 # Example new test function
 test_new_functionality() {
     echo -e "${BLUE}Testing new functionality...${NC}"
-    
+
     # Test setup
-    # Test execution  
+    # Test execution
     # Verification
-    
+
     if [[ condition ]]; then
         return 0  # Success
     else
@@ -75,14 +75,6 @@ The test framework is designed for CI/CD:
 - Fast execution - typically completes in seconds
 - Clear exit codes - 0 for success, 1 for failure
 - Detailed output - shows exactly what passed/failed
-
-## Benefits
-
-- **Zero Production Risk** - Complete isolation from live data
-- **Reliable Results** - Clean state on every run
-- **Easy Maintenance** - Simple bash scripts
-- **CI/CD Ready** - Works in any Unix environment
-- **Fast Feedback** - Quick validation of agent functionality
 
 ## Safety Features
 
