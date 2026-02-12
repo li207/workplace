@@ -44,7 +44,7 @@ trap cleanup EXIT
 # Create test data structure (new unified layout)
 mkdir -p "$TEST_DIR"/active/test01/{docs,logs,scratch}
 mkdir -p "$TEST_DIR"/active/test02/{docs,logs,scratch}
-mkdir -p "$TEST_DIR"/archive/weeks
+mkdir -p "$TEST_DIR"/weeks
 
 # Create test task.md files
 cat > "$TEST_DIR/active/test01/task.md" << 'EOF'
@@ -102,8 +102,8 @@ cat > "$TEST_DIR/active/test02/PROGRESS.md" << 'EOF'
 - [ ] Second action
 EOF
 
-# Create test index.md
-cat > "$TEST_DIR/index.md" << 'EOF'
+# Create test dashboard.md
+cat > "$TEST_DIR/dashboard.md" << 'EOF'
 # Workspace
 
 > Last updated: 2026-02-01 PST
@@ -112,8 +112,8 @@ cat > "$TEST_DIR/index.md" << 'EOF'
 
 | Task | Priority | Due | State | Next Action |
 |------|----------|-----|-------|-------------|
-| [Test task alpha](active/test01/) | P1 | — | In Progress | Complete validation |
-| [Test task beta](active/test02/) | P2 | Feb 3 | Not Started | Review PLAN.md |
+| [Test task alpha](active/test01/PROGRESS.md) | P1 | — | In Progress | Complete validation |
+| [Test task beta](active/test02/PROGRESS.md) | P2 | Feb 3 | Not Started | Review PLAN.md |
 EOF
 
 # Create test workspace config
@@ -167,16 +167,16 @@ test_task_folder_structure() {
        [[ -d "$TEST_DIR/active/test01/docs" ]] && \
        [[ -d "$TEST_DIR/active/test01/logs" ]] && \
        [[ -d "$TEST_DIR/active/test01/scratch" ]] && \
-       [[ -d "$TEST_DIR/archive/weeks" ]]; then
+       [[ -d "$TEST_DIR/weeks" ]]; then
         return 0
     fi
     return 1
 }
 
 test_index_exists() {
-    echo -e "${BLUE}Testing index.md exists...${NC}"
+    echo -e "${BLUE}Testing dashboard.md exists...${NC}"
 
-    if [[ -f "$TEST_DIR/index.md" ]] && grep -q "Active Tasks" "$TEST_DIR/index.md"; then
+    if [[ -f "$TEST_DIR/dashboard.md" ]] && grep -q "Active Tasks" "$TEST_DIR/dashboard.md"; then
         return 0
     else
         return 1
@@ -222,7 +222,7 @@ test_task_folder_structure
 test_result $? "Task folder structure (active/{id}/ layout)"
 
 test_index_exists
-test_result $? "Index.md generation"
+test_result $? "Dashboard.md generation"
 
 test_progress_parsing
 test_result $? "PROGRESS.md state parsing"

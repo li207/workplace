@@ -4,7 +4,7 @@ A single command for creating, tracking, and completing tasks with isolated work
 
 ## Overview
 
-The `/task` command replaces the old `/todo` + `/workspace` commands. Each task gets its own folder containing metadata, plans, progress tracking, and work files. The `workspace-data/` directory serves as an Obsidian vault with `index.md` as the canonical entry point.
+The `/task` command replaces the old `/todo` + `/workspace` commands. Each task gets its own folder containing metadata, plans, progress tracking, and work files. The `workspace-data/` directory serves as an Obsidian vault with `dashboard.md` as the canonical entry point.
 
 ## Quick Start
 ```bash
@@ -19,7 +19,7 @@ The `/task` command replaces the old `/todo` + `/workspace` commands. Each task 
 
 ```
 workspace-data/
-├── index.md                    ← auto-generated canonical view
+├── dashboard.md                    ← auto-generated canonical view
 ├── active/
 │   └── {task-id}/
 │       ├── task.md             ← metadata (priority, due, tags, context)
@@ -29,10 +29,10 @@ workspace-data/
 │       ├── docs/               ← documentation
 │       ├── logs/               ← investigation logs
 │       └── scratch/            ← temporary files
-└── archive/
-    ├── {task-id}/              ← completed tasks (same structure)
-    └── weeks/
-        └── YYYY-MM-DD.md       ← weekly summaries (Monday date)
+├── archive/
+│   └── {task-id}/              ← completed tasks (same structure)
+└── weeks/
+    └── YYYY-MM-DD.md           ← weekly summaries (Monday date)
 ```
 
 ## Intents
@@ -40,12 +40,12 @@ workspace-data/
 | Intent | Aliases | Description |
 |--------|---------|-------------|
 | **CREATE** | create, add, new | Create a new task with folder structure |
-| **LIST** | list, show | Display active tasks sorted by urgency |
+| **LIST** | list, show | Display active tasks from dashboard.md |
 | **OPEN** | open, work on, switch | Switch context to a task |
 | **DONE** | done, complete, finish | Archive a completed task |
 | **UPDATE** | update, change, modify | Change metadata or log progress |
 | **PLAN** | plan | Co-author PLAN.md |
-| **REVIEW** | review, status | Overview with stats and alerts |
+| **REVIEW** | review, status | Full scan, regenerate dashboard, show stats |
 | **HELP** | help | Show this documentation |
 
 ## Templates
@@ -70,23 +70,29 @@ When completing: add `- **completed**: YYYY-MM-DD` and summary to Context.
 # Plan: {title}
 
 ## Objective
-{What this task aims to accomplish}
+{Clear, measurable outcome. What does "done" look like?}
 
-## Approach
-{High-level strategy — Claude drafts, user reviews}
+## Context
+{Background info a new session needs: relevant files, current state, constraints, dependencies}
+
+## Steps
+1. **{Step title}**
+   - What: {Specific action}
+   - Where: {File paths, endpoints, components affected}
+   - How: {Implementation details, approach}
+   - Done when: {Verification criteria}
 
 ## Design
-{Technical details, architecture decisions}
+{Technical details, architecture decisions — if applicable}
 
-## Open Questions
-{Unresolved items needing user input}
-
-## Decisions Log
+## Decisions
 | Date | Decision | Rationale |
 |------|----------|-----------|
 ```
 
-**Co-authoring:** Claude drafts during creation or planning. User reviews/edits in Obsidian. Claude re-reads at session start.
+**Interactive planning:** `/task plan` triggers an interactive session — Claude asks clarifying questions, researches relevant code, then drafts detailed steps. The plan is iterated through conversation until approved, then written to PLAN.md and synced to PROGRESS.md Next Actions.
+
+**Quality bar:** A new Claude session reading only PLAN.md + task.md + CLAUDE.md should be able to execute without asking clarifying questions.
 
 ### PROGRESS.md
 ```markdown
@@ -145,7 +151,7 @@ ALWAYS re-read PLAN.md and PROGRESS.md before starting any work.
 Check for user edits made via Obsidian since last session.
 ```
 
-### index.md
+### dashboard.md
 ```markdown
 # Workspace
 
@@ -155,23 +161,23 @@ Check for user edits made via Obsidian since last session.
 
 | Task | Priority | Due | State | Next Action |
 |------|----------|-----|-------|-------------|
-| [Task title](active/{id}/) | P0 | Feb 10 | In Progress | Write tests |
+| [Task title](active/{id}/PROGRESS.md) | P0 | Feb 10 | In Progress | Write tests |
 
 ## This Week
 - Completed: N tasks
 - In progress: N tasks
-- [Weekly summary →](archive/weeks/YYYY-MM-DD.md)
+- [Weekly summary →](weeks/YYYY-MM-DD.md)
 ```
 
 Regenerated (not appended) after: create, done, update-metadata.
 
-### Weekly Summary (archive/weeks/YYYY-MM-DD.md)
+### Weekly Summary (weeks/YYYY-MM-DD.md)
 ```markdown
 # Week of {Month Day, Year}
 
 ## Completed ({N} tasks)
 
-### [P0] {Task title} #id:{id}
+### [P0] {Task title} [id:{id}](../archive/{id}/PROGRESS.md)
 **Completed:** YYYY-MM-DD | **Duration:** {days} days
 {Key accomplishments from PROGRESS.md}
 
@@ -243,11 +249,11 @@ Regenerated (not appended) after: create, done, update-metadata.
 ## Obsidian Integration
 
 Open `workspace-data/` as an Obsidian vault:
-- `index.md` is the canonical dashboard view
-- Navigate to tasks via links: `[Task title](active/{id}/)`
+- `dashboard.md` is the canonical dashboard view
+- Navigate to tasks via links: `[Task title](active/{id}/PROGRESS.md)`
 - Edit PLAN.md to co-author plans with Claude
 - Monitor PROGRESS.md for status updates
-- Browse weekly summaries in `archive/weeks/`
+- Browse weekly summaries in `weeks/`
 
 The `.obsidian/` config directory is gitignored.
 

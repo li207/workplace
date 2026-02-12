@@ -56,11 +56,11 @@ fi
 
 # Create necessary data directories in workspace-data
 mkdir -p "$WORKSPACE_DIR/workspace-data/active"
-mkdir -p "$WORKSPACE_DIR/workspace-data/archive/weeks"
+mkdir -p "$WORKSPACE_DIR/workspace-data/weeks"
 
-# Create initial index.md if it doesn't exist
-if [ ! -f "$WORKSPACE_DIR/workspace-data/index.md" ]; then
-    cat > "$WORKSPACE_DIR/workspace-data/index.md" << 'EOF'
+# Create initial dashboard.md if it doesn't exist
+if [ ! -f "$WORKSPACE_DIR/workspace-data/dashboard.md" ]; then
+    cat > "$WORKSPACE_DIR/workspace-data/dashboard.md" << 'EOF'
 # Workspace
 
 > Last updated: —

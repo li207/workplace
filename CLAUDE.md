@@ -12,11 +12,11 @@ Personal task management with natural language commands.
 ## Data Paths
 
 - **Config**: `~/.claude/workspace-path.txt` → WORKSPACE_DATA_DIR
-- **Index**: `WORKSPACE_DATA_DIR/index.md`
+- **Index**: `WORKSPACE_DATA_DIR/dashboard.md`
 - **Active tasks**: `WORKSPACE_DATA_DIR/active/{task-id}/`
 - **Archive**: `WORKSPACE_DATA_DIR/archive/{task-id}/`
-- **Weekly summaries**: `WORKSPACE_DATA_DIR/archive/weeks/`
-- **Obsidian vault**: `workspace-data/` (open as vault root, index.md is entry point)
+- **Weekly summaries**: `WORKSPACE_DATA_DIR/weeks/`
+- **Obsidian vault**: `workspace-data/` (open as vault root, dashboard.md is entry point)
 
 ## Task Folder Structure
 

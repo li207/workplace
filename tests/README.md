@@ -17,7 +17,7 @@ Automated testing framework for task and visual agents with complete isolation f
 ### Core Tests
 - **Task test data setup** - Validates synthetic test task creation in `active/{id}/task.md`
 - **Task folder structure** - Verifies `active/{id}/` has task.md, PROGRESS.md, docs/, logs/, scratch/
-- **Index.md generation** - Checks index.md exists with Active Tasks table
+- **Dashboard.md generation** - Checks dashboard.md exists with Active Tasks table
 - **PROGRESS.md state parsing** - Validates `**State**:` field is parseable
 - **Production data isolation** - Ensures zero contamination
 

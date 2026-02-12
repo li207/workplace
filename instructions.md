@@ -13,7 +13,7 @@ workspace/                          # Framework (shareable)
 │   ├── task/README.md
 │   └── visual/README.md
 └── workspace-data/                 # Private data (gitignored)
-    ├── index.md                    # Auto-generated canonical view
+    ├── dashboard.md                    # Auto-generated canonical view
     ├── active/
     │   └── {task-id}/
     │       ├── task.md
@@ -23,9 +23,9 @@ workspace/                          # Framework (shareable)
     │       ├── docs/
     │       ├── logs/
     │       └── scratch/
-    └── archive/
-        ├── {task-id}/
-        └── weeks/
+    ├── archive/
+    │   └── {task-id}/
+    └── weeks/
 ```
 
 ## Command Details
@@ -64,7 +64,7 @@ Requirements and notes
 
 When completing: add `- **completed**: YYYY-MM-DD` and summary to Context.
 
-### index.md
+### dashboard.md
 ```markdown
 # Workspace
 
@@ -74,23 +74,23 @@ When completing: add `- **completed**: YYYY-MM-DD` and summary to Context.
 
 | Task | Priority | Due | State | Next Action |
 |------|----------|-----|-------|-------------|
-| [Fix auth bug](active/abc123/) | P0 | Feb 10 | In Progress | Write tests |
+| [Fix auth bug](active/abc123/PROGRESS.md) | P0 | Feb 10 | In Progress | Write tests |
 
 ## This Week
 - Completed: 3 tasks
 - In progress: 2 tasks
-- [Weekly summary →](archive/weeks/2026-02-03.md)
+- [Weekly summary →](weeks/2026-02-03.md)
 ```
 
 Regenerated after: create, done, update-metadata. Built by scanning `active/*/task.md` + reading State from each `PROGRESS.md`.
 
-### Weekly Summary (archive/weeks/YYYY-MM-DD.md)
+### Weekly Summary (weeks/YYYY-MM-DD.md)
 ```markdown
 # Week of Feb 3, 2026
 
 ## Completed (3 tasks)
 
-### [P0] Fix critical auth bug #id:abc123
+### [P0] Fix critical auth bug [id:abc123](../archive/abc123/PROGRESS.md)
 **Completed:** 2026-02-05 | **Duration:** 3 days
 Key accomplishments from PROGRESS.md
 
@@ -104,23 +104,29 @@ Key accomplishments from PROGRESS.md
 # Plan: {task-title}
 
 ## Objective
-{What this task aims to accomplish}
+{Clear, measurable outcome. What does "done" look like?}
 
-## Approach
-{High-level strategy — Claude drafts, user reviews}
+## Context
+{Background info a new session needs: relevant files, current state, constraints, dependencies}
+
+## Steps
+1. **{Step title}**
+   - What: {Specific action}
+   - Where: {File paths, endpoints, components affected}
+   - How: {Implementation details, approach}
+   - Done when: {Verification criteria}
 
 ## Design
-{Technical details, architecture decisions}
+{Technical details, architecture decisions — if applicable}
 
-## Open Questions
-{Unresolved items needing user input}
-
-## Decisions Log
+## Decisions
 | Date | Decision | Rationale |
 |------|----------|-----------|
 ```
 
-**Co-authoring workflow:** Claude drafts the plan during task creation. The user reviews and edits via Obsidian. Claude re-reads PLAN.md at session start to pick up changes.
+**Interactive planning:** `/task plan` triggers an interactive session — Claude asks clarifying questions, researches relevant code, drafts detailed steps, and iterates until approved. The finalized plan is written to PLAN.md and synced to PROGRESS.md Next Actions.
+
+**Quality bar:** A new Claude session reading only PLAN.md + task.md + CLAUDE.md must be able to execute without asking clarifying questions.
 
 ### PROGRESS.md
 ```markdown
@@ -158,7 +164,7 @@ At the beginning of each task session, Claude must:
 
 ### Obsidian Vault
 
-The `workspace-data/` directory is designed to function as an Obsidian vault root. Open it as a vault in Obsidian to review plans, track progress, and co-author with Claude. The `index.md` file is the canonical entry point. The `.obsidian/` directory is gitignored.
+The `workspace-data/` directory is designed to function as an Obsidian vault root. Open it as a vault in Obsidian to review plans, track progress, and co-author with Claude. The `dashboard.md` file is the canonical entry point. The `.obsidian/` directory is gitignored.
 
 ## Extension Pattern
 

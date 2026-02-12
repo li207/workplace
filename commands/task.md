@@ -21,7 +21,7 @@ Manage tasks via natural language. Config: `~/.claude/workspace-path.txt` → WO
 
 ```
 workspace-data/
-├── index.md                    ← auto-generated canonical view
+├── dashboard.md                ← auto-generated canonical view
 ├── active/
 │   └── {task-id}/
 │       ├── task.md             ← metadata (priority, due, tags, context)
@@ -31,15 +31,15 @@ workspace-data/
 │       ├── docs/
 │       ├── logs/
 │       └── scratch/
-└── archive/
-    ├── {task-id}/              ← same structure as active
-    └── weeks/
-        └── 2026-02-03.md       ← weekly summary (Monday date)
+├── archive/
+│   └── {task-id}/              ← same structure as active
+└── weeks/
+    └── 2026-02-03.md           ← weekly summary (Monday date)
 ```
 
 ## Operations
 
-**CREATE** → Generate 6-char ID, parse priority (p0-p3/urgent/high/medium/low), dates (tomorrow/friday/"feb 15"/"in 3 days"), context. Create `active/{id}/` with: task.md, PLAN.md, PROGRESS.md, CLAUDE.md, docs/, logs/, scratch/. Regenerate index.md.
+**CREATE** → Generate 6-char ID, parse priority (p0-p3/urgent/high/medium/low), dates (tomorrow/friday/"feb 15"/"in 3 days"), context. Create `active/{id}/` with: task.md, PLAN.md, PROGRESS.md, CLAUDE.md, docs/, logs/, scratch/. Regenerate dashboard.md.
 
 **task.md template:**
 ```markdown
@@ -85,26 +85,38 @@ ALWAYS re-read PLAN.md and PROGRESS.md before starting any work.
 Check for user edits made via Obsidian since last session.
 ```
 
-**PLAN.md template:**
+**PLAN.md template:** (only written after interactive planning is finalized)
 ```markdown
 # Plan: {title}
 
 ## Objective
-{What this task aims to accomplish}
+{Clear, measurable outcome. What does "done" look like?}
 
-## Approach
-{High-level strategy — Claude drafts, user reviews}
+## Context
+{Background info a new session needs: relevant files, current state, constraints, dependencies}
+
+## Steps
+1. **{Step title}**
+   - What: {Specific action}
+   - Where: {File paths, endpoints, components affected}
+   - How: {Implementation details, approach}
+   - Done when: {Verification criteria}
+
+2. **{Step title}**
+   - What: ...
+   - Where: ...
+   - How: ...
+   - Done when: ...
 
 ## Design
-{Technical details, architecture decisions}
+{Technical details, architecture decisions — if applicable}
 
-## Open Questions
-{Unresolved items needing user input}
-
-## Decisions Log
+## Decisions
 | Date | Decision | Rationale |
 |------|----------|-----------|
 ```
+
+**Plan quality bar:** A new Claude session reading only PLAN.md + task.md + CLAUDE.md should be able to execute the plan without asking clarifying questions. Each step must specify what to do, where to do it, how to do it, and how to verify it's done.
 
 **PROGRESS.md template:**
 ```markdown
@@ -144,7 +156,7 @@ None
 
 **Progress Calculation:** Progress percentage is auto-calculated from Next Actions checkboxes. Count `[x]` completed vs total checkboxes.
 
-**LIST** → Read `index.md` (or scan `active/*/task.md`), sort: overdue → due → priority → created. Format: numbered list with priority, title, due date, state, next action.
+**LIST** → Read `dashboard.md` and display active tasks. Sort: overdue → due → priority → created. Format: numbered list with priority, title, due date, state, next action.
 
 **OPEN** → Resolve task ID (by number/description/ID). Switch context to task:
 1. Read `active/{id}/CLAUDE.md` for context
@@ -156,27 +168,34 @@ None
 2. Set State to "Done" in Status block
 3. Add `- **completed**: YYYY-MM-DD` to task.md, add summary to Context
 4. Move `active/{id}/` → `archive/{id}/`
-5. Append to weekly summary (`archive/weeks/YYYY-MM-DD.md`, Monday date)
-6. Regenerate index.md
+5. Append to weekly summary (`weeks/YYYY-MM-DD.md`, Monday date)
+6. Regenerate dashboard.md
 
 **UPDATE** → Auto-detect intent from input:
-- Metadata changes (priority/due/tags) → update task.md, regenerate index.md
+- Metadata changes (priority/due/tags) → update task.md, regenerate dashboard.md
 - Session progress → update PROGRESS.md (add accomplishments, update current focus, revise next actions, note blockers)
 
-**PLAN** → Co-author `active/{id}/PLAN.md`:
-- Claude drafts or updates the plan
-- User reviews and edits via Obsidian
-- Claude re-reads at session start to pick up changes
+**PLAN** → Interactive planning for `active/{id}/PLAN.md`:
+1. Read task.md for context and existing PLAN.md if any
+2. Ask clarifying questions to understand scope, constraints, and priorities — don't assume
+3. Research: explore relevant code, files, and dependencies to ground the plan in reality
+4. Draft a plan with detailed, executable steps (see template above for required structure)
+5. Present the plan to the user for feedback
+6. Iterate — refine based on user input until the plan is approved
+7. Write the finalized plan to PLAN.md
+8. Update PROGRESS.md Next Actions with the plan's steps as checkboxes
 
-**REVIEW** → Overview: count by priority, overdue alerts, this week's completions, link to weekly summary
+**Quality bar:** The finalized PLAN.md must be a standalone execution document. A new Claude session or another AI agent reading PLAN.md + task.md + CLAUDE.md should be able to execute without asking clarifying questions. Every step must have: what, where, how, and done-when.
+
+**REVIEW** → Full scan and sync. Scan all `active/*/task.md` + `active/*/PROGRESS.md` to build fresh state. Regenerate `dashboard.md`. Then display: count by priority, overdue alerts, this week's completions, link to weekly summary. Use this to fix stale dashboard or after manual Obsidian edits.
 
 **HELP** → Read `modules/task/README.md` via Task tool
 
-## index.md Generation
+## dashboard.md Generation
 
 Regenerate (not append) after: create, done, update-metadata. Build by scanning `active/*/task.md` + reading State from each `PROGRESS.md` Status block.
 
-**index.md template:**
+**dashboard.md template:**
 ```markdown
 # Workspace
 
@@ -186,24 +205,24 @@ Regenerate (not append) after: create, done, update-metadata. Build by scanning 
 
 | Task | Priority | Due | State | Next Action |
 |------|----------|-----|-------|-------------|
-| [Task title](active/{id}/) | P0 | Feb 10 | In Progress | Write tests |
+| [Task title](active/{id}/PROGRESS.md) | P0 | Feb 10 | In Progress | Write tests |
 
 ## This Week
 - Completed: N tasks
 - In progress: N tasks
-- [Weekly summary →](archive/weeks/YYYY-MM-DD.md)
+- [Weekly summary →](weeks/YYYY-MM-DD.md)
 ```
 
 ## Weekly Summary
 
-File: `archive/weeks/YYYY-MM-DD.md` (Monday date of the week)
+File: `weeks/YYYY-MM-DD.md` (Monday date of the week)
 
 ```markdown
 # Week of {Month Day, Year}
 
 ## Completed ({N} tasks)
 
-### [P0] {Task title} #id:{id}
+### [P0] {Task title} [id:{id}](../archive/{id}/PROGRESS.md)
 **Completed:** YYYY-MM-DD | **Duration:** {days} days
 {Key accomplishments from PROGRESS.md}
 
@@ -215,7 +234,7 @@ File: `archive/weeks/YYYY-MM-DD.md` (Monday date of the week)
 ## Paths
 - Active: `WORKSPACE_DATA_DIR/active/{task-id}/`
 - Archive: `WORKSPACE_DATA_DIR/archive/{task-id}/`
-- Weekly: `WORKSPACE_DATA_DIR/archive/weeks/`
-- Index: `WORKSPACE_DATA_DIR/index.md`
+- Weekly: `WORKSPACE_DATA_DIR/weeks/`
+- Dashboard: `WORKSPACE_DATA_DIR/dashboard.md`
 
 **Errors:** No config → run bootstrap | No task → show list | Ambiguous → ask clarification

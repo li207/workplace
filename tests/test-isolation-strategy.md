@@ -19,7 +19,7 @@ export WORKSPACE_DATA_DIR="$TEST_DATA_DIR"
 
 # Create test structure
 mkdir -p "$TEST_DATA_DIR"/active/test01/{docs,logs,scratch}
-mkdir -p "$TEST_DATA_DIR"/archive/weeks
+mkdir -p "$TEST_DATA_DIR"/weeks
 
 # Create test task
 cat > "$TEST_DATA_DIR/active/test01/task.md" << 'EOF'
@@ -99,7 +99,7 @@ echo "Creating test environment: $TEST_DIR"
 
 # Setup test structure (unified task layout)
 mkdir -p "$TEST_DIR"/active/test01/{docs,logs,scratch}
-mkdir -p "$TEST_DIR"/archive/weeks
+mkdir -p "$TEST_DIR"/weeks
 
 # Create test task
 cat > "$TEST_DIR/active/test01/task.md" << 'EOF'

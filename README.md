@@ -73,7 +73,7 @@ workspace/                    # Public Framework (this repo)
 └── CLAUDE.md                # Quick reference
 
 workspace-data/              # Private Data (separate repo)
-├── index.md                 # Auto-generated canonical view
+├── dashboard.md                 # Auto-generated canonical view
 ├── active/                  # Active task workspaces
 │   └── {task-id}/
 │       ├── task.md          # Metadata (priority, due, tags, context)
@@ -83,9 +83,9 @@ workspace-data/              # Private Data (separate repo)
 │       ├── docs/            # Documentation
 │       ├── logs/            # Investigation logs
 │       └── scratch/         # Temporary files
-└── archive/                 # Completed tasks
-    ├── {task-id}/           # Archived task folder
-    └── weeks/               # Weekly summaries
+├── archive/                 # Completed tasks
+│   └── {task-id}/           # Archived task folder
+└── weeks/                   # Weekly summaries
 ```
 
 ### Privacy Model
